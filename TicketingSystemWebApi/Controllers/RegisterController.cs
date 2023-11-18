@@ -6,5 +6,6 @@ namespace TicketingSystemWebApi.Controllers
     [Route("[controller]")]
     public class RegisterController : ControllerBase
     {
+
     }
 }
