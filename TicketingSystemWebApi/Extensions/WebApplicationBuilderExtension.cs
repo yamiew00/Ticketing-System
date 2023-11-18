@@ -1,4 +1,5 @@
 ﻿using TicketingSystemModel;
+using TicketingSystemWebApi.Services.Register;
 
 namespace TicketingSystemWebApi.Extensions
 {
@@ -10,6 +11,14 @@ namespace TicketingSystemWebApi.Extensions
             builder.Services.AddMongoContext(new TicketSystemMongoContext(configuration.GetConnectionString("MongoDbConnection")));
 
             return builder;
+        }
+
+        public static IServiceCollection AddDependencyInjections(this IServiceCollection services)
+        {
+            //services
+            services.AddScoped<RegisterService>();
+
+            return services;
         }
     }
 }

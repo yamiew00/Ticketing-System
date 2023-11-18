@@ -4,7 +4,7 @@ namespace TicketingSystemModel
 {
     public class TicketSystemMongoContext : GoContext<TicketSystemMongoContext>
     {
-        [MongoDatabase]
+        [MongoDatabase(dbName: "Ticketing")]
         public class Ticketing { }
 
         public TicketSystemMongoContext(string connectionString) : base(connectionString)
