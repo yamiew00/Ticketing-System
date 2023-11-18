@@ -1,5 +1,8 @@
-﻿using TicketingSystemModel;
+﻿using MongoDB.Bson.Serialization;
+using TicketingSystemModel;
+using TicketingSystemWebApi.Services.Login;
 using TicketingSystemWebApi.Services.Register;
+using TicketingSystemWebApi.Tools;
 
 namespace TicketingSystemWebApi.Extensions
 {
@@ -9,6 +12,9 @@ namespace TicketingSystemWebApi.Extensions
         {
             var configuration = builder.Configuration;
             builder.Services.AddMongoContext(new TicketSystemMongoContext(configuration.GetConnectionString("MongoDbConnection")));
+            
+            //add datetime serializer
+            BsonSerializer.RegisterSerializer(typeof(DateTime), new TaiwanDateTimeSerializer());
 
             return builder;
         }
@@ -17,6 +23,7 @@ namespace TicketingSystemWebApi.Extensions
         {
             //services
             services.AddScoped<RegisterService>();
+            services.AddScoped<LoginService>();
 
             return services;
         }

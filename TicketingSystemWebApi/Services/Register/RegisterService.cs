@@ -50,7 +50,7 @@ namespace TicketingSystemWebApi.Services.Register
                 },
                 PersonalActivity = new PersonalActivity
                 {
-                    RegistrationTime = DateTime.Now
+                    RegistrationTime = DateTime.UtcNow
                 }
             };
         }
