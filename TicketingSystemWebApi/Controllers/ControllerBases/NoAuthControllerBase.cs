@@ -4,7 +4,7 @@ namespace TicketingSystemWebApi.Controllers.ControllerBases
 {
     [ApiController]
     [Route("[controller]")]
-    public class NoAuthControllerBase : ControllerBase
+    public abstract class NoAuthControllerBase : ControllerBase
     {
     }
 }
