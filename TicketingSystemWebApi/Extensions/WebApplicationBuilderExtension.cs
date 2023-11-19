@@ -1,5 +1,6 @@
 ﻿using MongoDB.Bson.Serialization;
 using TicketingSystemModel;
+using TicketingSystemWebApi.Services.Event;
 using TicketingSystemWebApi.Services.Login;
 using TicketingSystemWebApi.Services.Register;
 using TicketingSystemWebApi.Tools;
@@ -24,6 +25,7 @@ namespace TicketingSystemWebApi.Extensions
             //services
             services.AddScoped<RegisterService>();
             services.AddScoped<LoginService>();
+            services.AddScoped<EventService>();
 
             return services;
         }
