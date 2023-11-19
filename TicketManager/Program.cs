@@ -1,4 +1,5 @@
 using TicketManager.Extensions;
+using TicketManager.Tools.Swaggers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,7 +8,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SchemaFilter<SwaggerDefaultValues>();
+});
 
 //mongodb context
 builder.AddMongoContext();
