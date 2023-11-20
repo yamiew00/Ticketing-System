@@ -35,7 +35,14 @@ namespace TicketingSystemModel.Ticketing
         /// <summary>
         /// 是否已被賣出
         /// </summary>
-        public bool IsSold { get; set; }
+        public TicketStatus IsSold { get; set; }
+    }
+
+    public enum TicketStatus
+    {
+        Sold = 0,            // 已售出
+        PendingPurchase = 1, // 認購中
+        Available = 2        // 販賣中
     }
 
     /// <summary>

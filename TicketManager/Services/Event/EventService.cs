@@ -163,7 +163,7 @@ namespace TicketManager.Services.Event
                 EventId = eventId,
                 SaleUserInfo = new TicketSaleUserInfo
                 {
-                    IsSold = false,
+                    IsSold = TicketStatus.Available,
                     UserId = null
                 },
                 PurchaseInfo = new TicketPurchaseInfo

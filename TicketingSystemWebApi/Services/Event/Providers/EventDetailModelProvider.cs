@@ -31,7 +31,7 @@ namespace TicketingSystemWebApi.Services.Event.Providers
                                                                 (EventWithTickets eventWithTickets) => eventWithTickets.Ticket
                                                             )
                                                             .Unwind<EventWithTickets, EventWithOneTicket>(eventWithTickets => eventWithTickets.Ticket)
-                                                            .Match(eventWithOneTicket => eventWithOneTicket.Ticket.SaleUserInfo.IsSold == false &&
+                                                            .Match(eventWithOneTicket => eventWithOneTicket.Ticket.SaleUserInfo.IsSold == TicketStatus.Available &&
                                                                                          eventWithOneTicket.Ticket.PurchaseInfo.SaleStartTime <= DateTime.UtcNow &&
                                                                                          eventWithOneTicket.Ticket.PurchaseInfo.SaleEndTime >= DateTime.UtcNow)
                                                             .Group(e => e.Id, g => new EventDetailModel
