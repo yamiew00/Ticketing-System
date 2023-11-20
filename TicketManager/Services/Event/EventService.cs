@@ -61,7 +61,7 @@ namespace TicketManager.Services.Event
                 };
 
                 //產ticket
-                List<TicketEntity> ticketEntities = GenerateTickets(generateTicketCountPerEvent, eventEntity.Id);
+                List<TicketEntity> ticketEntities = GenerateTickets(generateTicketCountPerEvent, eventEntity.Id, eventEntity.Schedule.StartAt);
 
                 await _eventCollection.InsertOneAsync(eventEntity);
                 await _ticketCollection.InsertManyAsync(ticketEntities);
@@ -99,7 +99,7 @@ namespace TicketManager.Services.Event
                 };
 
                 //產ticket
-                List<TicketEntity> ticketEntities = GenerateTickets(generateTicketCountPerEvent, eventEntity.Id);
+                List<TicketEntity> ticketEntities = GenerateTickets(generateTicketCountPerEvent, eventEntity.Id, eventEntity.Schedule.StartAt);
 
                 await _eventCollection.InsertOneAsync(eventEntity);
                 await _ticketCollection.InsertManyAsync(ticketEntities);
@@ -154,7 +154,7 @@ namespace TicketManager.Services.Event
             return list[new Random().Next(list.Count)];
         }
 
-        private static List<TicketEntity> GenerateTickets(int generateTicketCountPerEvent, string eventId)
+        private static List<TicketEntity> GenerateTickets(int generateTicketCountPerEvent, string eventId, DateTime eventStartAt)
         {
             var midnightToday = DateTime.UtcNow.Date;
             
@@ -168,10 +168,10 @@ namespace TicketManager.Services.Event
                 },
                 PurchaseInfo = new TicketPurchaseInfo
                 {
-                    //為了方便起見，startTime總是過去的時點
+                    //為了測試方便起見，startTime總是過去的時點
                     SaleStartTime = midnightToday.AddDays(-10).AddDays(new Random().Next(1, 5)),
-                    //為了方便起見，endTime總是未來的時點
-                    SaleEndTime = DateTime.UtcNow.AddDays(new Random().Next(1, 5))
+                    //為了方便起見，不考慮分批賣ticket的場景。都假設賣到event的開場為止
+                    SaleEndTime = eventStartAt
                 }
             }).ToList();
         }

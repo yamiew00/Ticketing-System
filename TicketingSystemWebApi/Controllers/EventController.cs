@@ -15,11 +15,11 @@ namespace TicketingSystemWebApi.Controllers
             this._eventService = eventService;
         }
 
-        [HttpPost("EventList")]
-        public async Task<ResponseBase<EventListResponse>> EventList(EventListRequest request)
+        [HttpPost("GetList")]
+        public async Task<ResponseBase<EventGetListResponse>> GetList(EventGetListRequest request)
         {
-            EventListResponse response = await _eventService.EventList(request);
-            return new ResponseBase<EventListResponse>(response);
+            EventGetListResponse response = await _eventService.GetList(request);
+            return new ResponseBase<EventGetListResponse>(response);
         }
     }
 }

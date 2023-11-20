@@ -4,6 +4,6 @@ namespace TicketingSystemWebApi.Services.Event.Models
 {
     public class EventDetailModel : EventEntity
     {
-        public int TicketCount { get; set; }
+        public int AvailableTicketCount { get; set; }
     }
 }

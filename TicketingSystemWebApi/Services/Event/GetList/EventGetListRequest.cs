@@ -1,6 +1,6 @@
 ﻿namespace TicketingSystemWebApi.Services.Event.EventList
 {
-    public class EventListRequest
+    public class EventGetListRequest
     {
         public DateTime? StartAt { get; set; }
 

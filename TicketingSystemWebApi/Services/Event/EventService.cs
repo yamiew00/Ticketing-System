@@ -1,10 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using MongoDB.Driver;
+﻿using MongoDB.Driver;
 using MongoGogo.Connection;
-using System.Linq.Expressions;
 using TicketingSystemModel.Ticketing;
 using TicketingSystemWebApi.Services.Event.EventList;
 using TicketingSystemWebApi.Services.Event.Models;
+using TicketingSystemWebApi.Services.Event.Providers;
 
 namespace TicketingSystemWebApi.Services.Event
 {
@@ -12,38 +11,34 @@ namespace TicketingSystemWebApi.Services.Event
     {
         private readonly IGoCollection<EventEntity> _eventCollection;
         private readonly IGoCollection<TicketEntity> _ticketCollection;
+        private readonly EventDetailModelProvider _eventDetailModelProvider;
 
         public EventService(IGoCollection<EventEntity> eventCollection,
-                            IGoCollection<TicketEntity> ticketCollection)
+                            IGoCollection<TicketEntity> ticketCollection,
+                            EventDetailModelProvider eventDetailModelProvider)
         {
             this._eventCollection = eventCollection;
             this._ticketCollection = ticketCollection;
+            this._eventDetailModelProvider = eventDetailModelProvider;
         }
 
-        internal async Task<EventListResponse> EventList(EventListRequest request)
+        internal async Task<EventGetListResponse> GetList(EventGetListRequest request)
         {
-            var aggregate = _eventCollection.MongoCollection.Aggregate()
-                                                            .Lookup(
-                                                                _ticketCollection.MongoCollection,
-                                                                @event => @event.Id,
-                                                                ticket => ticket.EventId,
-                                                                (EventWithTickets eventWithTickets) => eventWithTickets.Ticket
-                                                            )
-                                                            .Unwind<EventWithTickets, EventWithOneTicket>(eventWithTickets => eventWithTickets.Ticket)
-                                                            .Match(eventWithOneTicket => eventWithOneTicket.Ticket.SaleUserInfo.IsSold == false &&
-                                                                                         eventWithOneTicket.Ticket.PurchaseInfo.SaleStartTime <= DateTime.UtcNow &&
-                                                                                         eventWithOneTicket.Ticket.PurchaseInfo.SaleEndTime >= DateTime.UtcNow)
-                                                            .Group(e => e.Id, g => new EventDetailModel
-                                                            {
-                                                                Id = g.Key,
-                                                                Detail = g.Select(e => e.Detail).First(),
-                                                                Schedule = g.Select(e => e.Schedule).First(),
-                                                                Metadata = g.Select(e => e.Metadata).First(),
-                                                                TicketCount = g.Count()
-                                                            });
+            List<EventDetailModel> eventDetails = await _eventDetailModelProvider.GetEventDetailModelByDate(new DateQuery_EventDetailModel { StartAt = request.StartAt, EndAt = request.EndAt});
 
-            var list = await aggregate.ToListAsync();
-            return new EventListResponse();
+            return new EventGetListResponse
+            {
+                Events = eventDetails.Select(detail => new EventGetListResponse_Event
+                {
+                    Id = detail.Id,
+                    Description = detail.Detail.Description,
+                    Title = detail.Detail.Title,
+                    StartAt = detail.Schedule.StartAt,
+                    EndAt = detail.Schedule.EndAt,  
+                    EventType = detail.Metadata.Type,
+                    AvailableTicketCount = detail.AvailableTicketCount
+                }).OrderBy(detail => detail.StartAt).ToList()
+            };
         }
     }
 }
