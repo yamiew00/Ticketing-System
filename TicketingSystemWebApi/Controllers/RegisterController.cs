@@ -15,6 +15,11 @@ namespace TicketingSystemWebApi.Controllers
             this._registerService = registerService;
         }
 
+        /// <summary>
+        /// 註冊
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost("")]
         public async Task<ResponseBase> Register(RegisterRequest request)
         {

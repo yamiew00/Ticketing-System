@@ -2,6 +2,7 @@
 using TicketingSystemModel;
 using TicketingSystemWebApi.Services.Event;
 using TicketingSystemWebApi.Services.Event.Providers;
+using TicketingSystemWebApi.Services.Event.Purchase;
 using TicketingSystemWebApi.Services.Login;
 using TicketingSystemWebApi.Services.Register;
 using TicketingSystemWebApi.Tools;
@@ -30,6 +31,9 @@ namespace TicketingSystemWebApi.Extensions
 
             //providers
             services.AddSingleton<EventDetailModelProvider>();
+
+            //handlers
+            services.AddScoped<PurchaseHandler>();
             return services;
         }
     }

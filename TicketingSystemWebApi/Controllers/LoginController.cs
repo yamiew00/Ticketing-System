@@ -15,6 +15,11 @@ namespace TicketingSystemWebApi.Controllers
             this._loginService = loginService;
         }
 
+        /// <summary>
+        /// 登入
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost("")]
         public async Task<ResponseBase<LoginResponse>> Login(LoginRequest request)
         {

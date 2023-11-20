@@ -1,25 +1,21 @@
 ﻿using MongoDB.Driver;
-using MongoGogo.Connection;
-using TicketingSystemModel.Ticketing;
 using TicketingSystemWebApi.Services.Event.EventList;
 using TicketingSystemWebApi.Services.Event.Models;
 using TicketingSystemWebApi.Services.Event.Providers;
+using TicketingSystemWebApi.Services.Event.Purchase;
 
 namespace TicketingSystemWebApi.Services.Event
 {
     public class EventService
     {
-        private readonly IGoCollection<EventEntity> _eventCollection;
-        private readonly IGoCollection<TicketEntity> _ticketCollection;
         private readonly EventDetailModelProvider _eventDetailModelProvider;
+        private readonly PurchaseHandler _purchaseHandler;
 
-        public EventService(IGoCollection<EventEntity> eventCollection,
-                            IGoCollection<TicketEntity> ticketCollection,
-                            EventDetailModelProvider eventDetailModelProvider)
+        public EventService(EventDetailModelProvider eventDetailModelProvider,
+                            PurchaseHandler purchaseHandler)
         {
-            this._eventCollection = eventCollection;
-            this._ticketCollection = ticketCollection;
             this._eventDetailModelProvider = eventDetailModelProvider;
+            this._purchaseHandler = purchaseHandler;
         }
 
         internal async Task<EventGetListResponse> GetList(EventGetListRequest request)
@@ -39,6 +35,11 @@ namespace TicketingSystemWebApi.Services.Event
                     AvailableTicketCount = detail.AvailableTicketCount
                 }).OrderBy(detail => detail.StartAt).ToList()
             };
+        }
+
+        internal Task<EventPurchaseResponse> Purchase(EventPurchaseRequest request)
+        {
+            return _purchaseHandler.Purchase(request);
         }
     }
 }
