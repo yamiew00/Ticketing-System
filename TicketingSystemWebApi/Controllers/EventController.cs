@@ -10,13 +10,10 @@ namespace TicketingSystemWebApi.Controllers
     public class EventController : AuthControllerBase
     {
         private readonly EventService _eventService;
-        private readonly PurchaseHandler _purchaseHandler;
 
-        public EventController(EventService eventService,
-                               PurchaseHandler purchaseHandler)
+        public EventController(EventService eventService)
         {
             this._eventService = eventService;
-            this._purchaseHandler = purchaseHandler;
         }
 
         /// <summary>
