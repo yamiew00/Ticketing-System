@@ -12,12 +12,12 @@ namespace TicketingSystemWebApi.Controllers.ControllerBases
     [MiddlewareFilter(typeof(AuthPipeline))]
     public class AuthControllerBase : ControllerBase
     {
-        protected CurrentUser CurrentUser => (HttpContext.Items[AuthMiddleware.AUTHORIZATION_HEADER_KEY] as CurrentUser)!;
+        protected CurrentUser CurrentUser => (HttpContext.Items[AuthMiddleware.USER_ITEM_KEY] as CurrentUser)!;
     }
 
     public class CurrentUser
     {
-        public string Id { get; set; }
+        public string UserId { get; set; }
 
         public string FullName { get; set; }
     }

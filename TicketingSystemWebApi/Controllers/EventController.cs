@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TicketingSystemWebApi.Controllers.ControllerBases;
+using TicketingSystemWebApi.Controllers.Pipelines;
 using TicketingSystemWebApi.Services;
 using TicketingSystemWebApi.Services.Event;
 using TicketingSystemWebApi.Services.Event.EventList;
@@ -34,6 +35,7 @@ namespace TicketingSystemWebApi.Controllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPost("Purchase")]
+        [MiddlewareFilter(typeof(CSRFValidatePipeline))]
         public async Task<ResponseBase<EventPurchaseResponse>> Purchase(EventPurchaseRequest request)
         {
             EventPurchaseResponse response = await _eventService.Purchase(request);

@@ -2,6 +2,7 @@
 using TicketingSystemModel.Ticketing;
 using TicketingSystemWebApi.Controllers.ControllerBases;
 using TicketingSystemWebApi.Exceptions;
+using TicketingSystemWebApi.Processors;
 
 namespace TicketingSystemWebApi.Controllers.Middlewares
 {
@@ -11,32 +12,25 @@ namespace TicketingSystemWebApi.Controllers.Middlewares
     /// </summary>
     public class AuthMiddleware
     {
-        public static readonly string AUTHORIZATION_HEADER_KEY = "";
+        public static readonly string USER_ITEM_KEY = "user";
 
         protected readonly RequestDelegate _next;
-        private readonly IGoCollection<TokenEntity> _tokenCollection;
 
-        public AuthMiddleware(RequestDelegate next,
-                              IGoCollection<TokenEntity> tokenCollection)
+        public AuthMiddleware(RequestDelegate next)
         {
             _next = next;
-            this._tokenCollection = tokenCollection;
         }
 
         public async Task Invoke(HttpContext context)
         {
-            if (!context.Request.Headers.TryGetValue("Authorization", out var stringValues) || 
-                string.IsNullOrEmpty(stringValues.ToString())) throw new InvalidIdentityException();
+            var httpContextManager = context.RequestServices.GetService<HttpContextManager>();
+            var userModel = await httpContextManager.GetUserModelFromHeader(context) ?? throw new InvalidIdentityException();
 
-            var authorizationToken = stringValues.ToString();
-            var dbToken = await _tokenCollection.FindOneAsync(filter: token => token.LoginToken == authorizationToken,
-                                                              projection: projecter => projecter.Include(token => token.UserId)) 
-                ?? throw new InvalidIdentityException();
-
-            context.Items.Add(AUTHORIZATION_HEADER_KEY, 
+            context.Items.Add(USER_ITEM_KEY, 
             new CurrentUser
             {
-                Id = dbToken.UserId
+                UserId = userModel.UserId,
+                FullName = userModel.FullName
             });
 
             await _next(context);

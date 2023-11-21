@@ -1,5 +1,6 @@
 ﻿using MongoDB.Bson.Serialization;
 using TicketingSystemModel;
+using TicketingSystemWebApi.Processors;
 using TicketingSystemWebApi.Services.Event;
 using TicketingSystemWebApi.Services.Event.Providers;
 using TicketingSystemWebApi.Services.Event.Purchase;
@@ -34,6 +35,10 @@ namespace TicketingSystemWebApi.Extensions
 
             //handlers
             services.AddScoped<PurchaseHandler>();
+
+            //processors
+            services.AddSingleton<CSRFValidator>();
+            services.AddScoped<HttpContextManager>();
             return services;
         }
     }
