@@ -1,15 +1,19 @@
 ﻿using MongoGogo.Connection;
 using TicketingSystemModel.Ticketing;
+using TicketingSystemWebApi.Processors;
 
 namespace TicketingSystemWebApi.Services.Event.Purchase
 {
     public class PurchaseHandler
     {
         private readonly IGoCollection<TicketEntity> _ticketCollection;
+        private readonly PaymentProcessor _paymentProcessor;
 
-        public PurchaseHandler(IGoCollection<TicketEntity> ticketCollection)
+        public PurchaseHandler(IGoCollection<TicketEntity> ticketCollection,
+                               PaymentProcessor paymentProcessor)
         {
             this._ticketCollection = ticketCollection;
+            this._paymentProcessor = paymentProcessor;
         }
 
         internal async Task<EventPurchaseResponse> Purchase(EventPurchaseRequest request, 
@@ -25,14 +29,14 @@ namespace TicketingSystemWebApi.Services.Event.Purchase
                                                                                                            ticket.PurchaseInfo.SaleStartTime <= utcNow &&
                                                                                                            ticket.PurchaseInfo.SaleEndTime >= utcNow &&
                                                                                                            ticket.SaleUserInfo.IsSold == TicketStatus.Available,
-                                                                                         updateDefinitionBuilder: updater => updater.Set(ticket => ticket.SaleUserInfo.IsSold, TicketStatus.PendingPurchase)
-                                                                                                                                    .Set(ticket => ticket.SaleUserInfo.UserId, currentUser.UserId),
-                                                                                         new MongoGogo.Connection.Builders.Updates.GoUpdateOneAndRetrieveOptions<TicketEntity>
-                                                                                         {
-                                                                                             ReturnDocument = MongoDB.Driver.ReturnDocument.After,
-                                                                                             IsUpsert = false,
-                                                                                             Projection = projecter => projecter.Include(ticket => ticket.TicketId)
-                                                                                         });
+                                                                                              updateDefinitionBuilder: updater => updater.Set(ticket => ticket.SaleUserInfo.IsSold, TicketStatus.PendingPurchase)
+                                                                                                                                         .Set(ticket => ticket.SaleUserInfo.UserId, currentUser.UserId),
+                                                                                              new MongoGogo.Connection.Builders.Updates.GoUpdateOneAndRetrieveOptions<TicketEntity>
+                                                                                              {
+                                                                                                   ReturnDocument = MongoDB.Driver.ReturnDocument.After,
+                                                                                                   IsUpsert = false,
+                                                                                                   Projection = projecter => projecter.Include(ticket => ticket.TicketId)
+                                                                                              });
 
                 if (pendingPurchaseTicket != null) pendingPurchaseTickets.Add(pendingPurchaseTicket);
                 else 
@@ -46,7 +50,13 @@ namespace TicketingSystemWebApi.Services.Event.Purchase
             }
 
             //cash card
-
+            await _paymentProcessor.Process(new PaymentProcessor.PaymentRequestData
+            {
+                //模擬情境，假設一張票總是10美元
+                Amount = request.TicketQuantity * 10,
+                EventId = request.EventId,
+                PaymentToken = request.PaymentToken
+            });
 
             await MarkTicketasSoldout(pendingPurchaseTickets);
             return new EventPurchaseResponse

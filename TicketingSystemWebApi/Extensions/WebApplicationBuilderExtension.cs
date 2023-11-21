@@ -39,6 +39,8 @@ namespace TicketingSystemWebApi.Extensions
             //processors
             services.AddSingleton<CSRFValidator>();
             services.AddScoped<HttpContextManager>();
+            services.AddSingleton<PaymentProcessor>();
+
             return services;
         }
     }
