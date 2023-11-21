@@ -46,7 +46,9 @@ namespace TicketingSystemWebApi.Services.Register
                 Id = Guid.NewGuid().ToString(),
                 PersonalInfo = new PersonalInfo
                 {
-                    FullName = request.FullName
+                    FullName = request.FullName,
+                    //只是為了模擬，所以不做信箱驗證
+                    Email = request.Email,
                 },
                 PersonalActivity = new PersonalActivity
                 {
