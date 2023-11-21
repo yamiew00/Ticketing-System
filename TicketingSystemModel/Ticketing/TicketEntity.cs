@@ -1,11 +1,15 @@
-﻿using MongoGogo.Connection;
+﻿using MongoDB.Bson.Serialization.Attributes;
+using MongoGogo.Connection;
 
 namespace TicketingSystemModel.Ticketing
 {
     [MongoCollection(fromDatabase: typeof(TicketSystemMongoContext.Ticketing),
                  collectionName: "Ticket")]
-    public class TicketEntity : GoDocument
+    public class TicketEntity
     {
+        [BsonId]
+        public string TicketId { get; set; }
+
         /// <summary>
         /// foreign to 'EventEntity.Id'
         /// </summary>

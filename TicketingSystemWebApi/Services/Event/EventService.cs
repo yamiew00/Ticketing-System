@@ -37,9 +37,10 @@ namespace TicketingSystemWebApi.Services.Event
             };
         }
 
-        internal Task<EventPurchaseResponse> Purchase(EventPurchaseRequest request)
+        internal Task<EventPurchaseResponse> Purchase(EventPurchaseRequest request, 
+                                                      Controllers.ControllerBases.CurrentUser currentUser)
         {
-            return _purchaseHandler.Purchase(request);
+            return _purchaseHandler.Purchase(request, currentUser);
         }
     }
 }

@@ -160,6 +160,7 @@ namespace TicketManager.Services.Event
             
             return Enumerable.Range(0, generateTicketCountPerEvent).Select(_ => new TicketEntity
             {
+                TicketId = Guid.NewGuid().ToString(),
                 EventId = eventId,
                 SaleUserInfo = new TicketSaleUserInfo
                 {

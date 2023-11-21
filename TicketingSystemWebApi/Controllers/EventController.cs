@@ -38,7 +38,7 @@ namespace TicketingSystemWebApi.Controllers
         [MiddlewareFilter(typeof(CSRFValidatePipeline))]
         public async Task<ResponseBase<EventPurchaseResponse>> Purchase(EventPurchaseRequest request)
         {
-            EventPurchaseResponse response = await _eventService.Purchase(request);
+            EventPurchaseResponse response = await _eventService.Purchase(request, this.CurrentUser);
             return new ResponseBase<EventPurchaseResponse>(response);   
         }
     }

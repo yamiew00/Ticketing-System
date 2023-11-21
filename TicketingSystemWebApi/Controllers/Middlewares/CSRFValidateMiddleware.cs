@@ -1,6 +1,4 @@
-﻿using MongoGogo.Connection;
-using TicketingSystemModel.Ticketing;
-using TicketingSystemWebApi.Exceptions;
+﻿using TicketingSystemWebApi.Exceptions;
 using TicketingSystemWebApi.Processors;
 
 namespace TicketingSystemWebApi.Controllers.Middlewares
@@ -9,20 +7,16 @@ namespace TicketingSystemWebApi.Controllers.Middlewares
     {
         protected readonly RequestDelegate _next;
         private readonly CSRFValidator _csrfValidator;
-        private readonly IGoCollection<TokenEntity> _tokenCollection;
 
         public CSRFValidateMiddleware(RequestDelegate next,
-                                      CSRFValidator csrfValidator,
-                                      IGoCollection<TokenEntity> tokenCollection)
+                                      CSRFValidator csrfValidator)
         {
             _next = next;
             this._csrfValidator = csrfValidator;
-            this._tokenCollection = tokenCollection;
         }
 
         public async Task Invoke(HttpContext context)
         {
-
             var httpContextManager = context.RequestServices.GetRequiredService<HttpContextManager>();
 
             var userModel = await httpContextManager.GetUserModelFromHeader(context) ?? throw new InvalidIdentityException();
