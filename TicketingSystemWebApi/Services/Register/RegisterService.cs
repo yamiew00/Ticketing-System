@@ -1,6 +1,7 @@
 ﻿using MongoDB.Driver;
 using MongoGogo.Connection;
 using TicketingSystemModel.Ticketing;
+using TicketingSystemWebApi.Exceptions;
 using TicketingSystemWebApi.Services.Register.Register;
 
 namespace TicketingSystemWebApi.Services.Register
@@ -20,7 +21,7 @@ namespace TicketingSystemWebApi.Services.Register
             // TODO: Implement a separate API for username availability check. 
             // This will ensure the username can be securely reserved for a brief period during registration, 
             // providing a better user experience and reducing the chances of username conflicts.
-            if (await _userCollection.CountAsync(user => user.Account.UserName == request.UserName) > 0) throw new Exception("username exists");
+            if (await _userCollection.CountAsync(user => user.Account.UserName == request.UserName) > 0) throw new DuplicateUserName_1100Exception("username exists");
 
             UserEntity userEntity = CreateNewUser(request);
             try
@@ -30,7 +31,7 @@ namespace TicketingSystemWebApi.Services.Register
             catch (MongoWriteException ex)
             {
                 //can 
-                throw new Exception("username exists");
+                throw new DuplicateUserName_1100Exception("username exists");
             }
         }
 

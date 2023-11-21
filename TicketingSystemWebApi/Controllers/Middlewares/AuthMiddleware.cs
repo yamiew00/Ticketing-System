@@ -24,7 +24,7 @@ namespace TicketingSystemWebApi.Controllers.Middlewares
         public async Task Invoke(HttpContext context)
         {
             var httpContextManager = context.RequestServices.GetService<HttpContextManager>();
-            var userModel = await httpContextManager.GetUserModelFromHeader(context) ?? throw new InvalidIdentityException();
+            var userModel = await httpContextManager.GetUserModelFromHeader(context) ?? throw new InvalidIdentity_1101Exception();
 
             context.Items.Add(USER_ITEM_KEY, 
             new CurrentUser

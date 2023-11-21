@@ -33,7 +33,7 @@ namespace TicketingSystemWebApi.Processors
         {
             if(_userModel == null)
             {
-                string authToken = GetAuthTokenFromHeader(context) ?? throw new InvalidIdentityException();
+                string authToken = GetAuthTokenFromHeader(context) ?? throw new InvalidIdentity_1101Exception();
                 var dbToken = await _tokenCollection.FindOneAsync(filter: token => token.LoginToken == authToken,
                                                                   projection: projecter => projecter.Include(token => token.UserId));
                 if (dbToken == null) return null;

@@ -1,3 +1,4 @@
+using TicketingSystemWebApi.Controllers.Middlewares;
 using TicketingSystemWebApi.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,6 +24,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseMiddleware<GlobalExceptionMiddleware>();
 app.UseHttpsRedirection();
 
 app.MapControllers();

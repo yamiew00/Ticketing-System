@@ -1,4 +1,5 @@
-﻿using TicketingSystemWebApi.Exceptions;
+﻿using System.Net;
+using TicketingSystemWebApi.Exceptions;
 using TicketingSystemWebApi.Processors;
 
 namespace TicketingSystemWebApi.Controllers.Middlewares
@@ -19,11 +20,11 @@ namespace TicketingSystemWebApi.Controllers.Middlewares
         {
             var httpContextManager = context.RequestServices.GetRequiredService<HttpContextManager>();
 
-            var userModel = await httpContextManager.GetUserModelFromHeader(context) ?? throw new InvalidIdentityException();
-            var csrfToken = httpContextManager.GetCSRFTokenFromHeader(context) ?? throw new InvalidCSRFException();
+            var userModel = await httpContextManager.GetUserModelFromHeader(context) ?? throw new InvalidIdentity_1101Exception();
+            var csrfToken = httpContextManager.GetCSRFTokenFromHeader(context) ?? throw new InvalidCSRF_1102Exception();
 
-            if (!await _csrfValidator.Validate(new CSRFValidator.CSRFValidatorParams(userId: userModel.UserId, csrfToken: csrfToken))) throw new InvalidCSRFException();
-
+            if (!await _csrfValidator.Validate(new CSRFValidator.CSRFValidatorParams(userId: userModel.UserId, csrfToken: csrfToken))) throw new InvalidCSRF_1102Exception();
+            
             await _next(context);
         }
     }
