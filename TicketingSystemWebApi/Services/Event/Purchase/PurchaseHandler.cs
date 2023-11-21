@@ -8,12 +8,15 @@ namespace TicketingSystemWebApi.Services.Event.Purchase
     {
         private readonly IGoCollection<TicketEntity> _ticketCollection;
         private readonly PaymentProcessor _paymentProcessor;
+        private readonly EmailProcessor _emailProcessor;
 
         public PurchaseHandler(IGoCollection<TicketEntity> ticketCollection,
-                               PaymentProcessor paymentProcessor)
+                               PaymentProcessor paymentProcessor,
+                               EmailProcessor emailProcessor)
         {
             this._ticketCollection = ticketCollection;
             this._paymentProcessor = paymentProcessor;
+            this._emailProcessor = emailProcessor;
         }
 
         internal async Task<EventPurchaseResponse> Purchase(EventPurchaseRequest request, 
@@ -50,7 +53,7 @@ namespace TicketingSystemWebApi.Services.Event.Purchase
             }
 
             //cash card
-            await _paymentProcessor.Process(new PaymentProcessor.PaymentRequestData
+            var paymentResponse = await _paymentProcessor.Process(new PaymentProcessor.PaymentRequestData
             {
                 //模擬情境，假設一張票總是10美元
                 Amount = request.TicketQuantity * 10,
@@ -58,11 +61,24 @@ namespace TicketingSystemWebApi.Services.Event.Purchase
                 PaymentToken = request.PaymentToken
             });
 
+            if (!paymentResponse.IsSuccess)
+            {
+                await ResetTicketStatus(pendingPurchaseTickets);
+                return new EventPurchaseResponse
+                {
+                    Status = EventPurchaseStatus.PaymentFailed
+                };
+            }
+
+            var ticketIds = pendingPurchaseTickets.Select(ticket => ticket.TicketId).ToList();
+            //email
+            await _emailProcessor.SendPurchaseSuccessEmail(currentUser.UserId, ticketIds);
+
             await MarkTicketasSoldout(pendingPurchaseTickets);
             return new EventPurchaseResponse
             {
                 Status = EventPurchaseStatus.PurchaseSuccessful,
-                Tickets = pendingPurchaseTickets.Select(ticket => ticket.TicketId).ToList()
+                Tickets = ticketIds
             };
         }
 
