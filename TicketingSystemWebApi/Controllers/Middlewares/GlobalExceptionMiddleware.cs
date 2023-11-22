@@ -31,7 +31,10 @@ namespace TicketingSystemWebApi.Controllers.Middlewares
                     Msg = ex.Message
                 };
 
-                await context.Response.WriteAsync(JsonSerializer.Serialize(response));
+                await context.Response.WriteAsync(JsonSerializer.Serialize(response, new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                }));
             }
             catch(Exception ex)
             {
@@ -44,7 +47,10 @@ namespace TicketingSystemWebApi.Controllers.Middlewares
                     Msg = ex.Message
                 };
 
-                await context.Response.WriteAsync(JsonSerializer.Serialize(response));
+                await context.Response.WriteAsync(JsonSerializer.Serialize(response, new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                }));
             }
         }
     }

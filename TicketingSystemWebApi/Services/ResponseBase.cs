@@ -1,4 +1,8 @@
-﻿namespace TicketingSystemWebApi.Services
+﻿
+
+using System.Text.Json.Serialization;
+
+namespace TicketingSystemWebApi.Services
 {
     public class ResponseBase<TData>
     {
