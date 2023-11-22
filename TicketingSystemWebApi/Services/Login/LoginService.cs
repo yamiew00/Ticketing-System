@@ -1,5 +1,6 @@
 ﻿using MongoGogo.Connection;
 using TicketingSystemModel.Ticketing;
+using TicketingSystemWebApi.Exceptions;
 using TicketingSystemWebApi.Extensions;
 using TicketingSystemWebApi.Services.Login.Login;
 
@@ -23,7 +24,7 @@ namespace TicketingSystemWebApi.Services.Login
                                                                        u.Account.Password == request.Password,
                                                           projection: projecter => projecter.Include(u => u.Id));
 
-            if (user == null) throw new Exception("帳號或密碼錯誤!");
+            if (user == null) throw new InvalidIdentity_1101Exception("帳號或密碼錯誤!");
 
             TokenEntity resultToken = await GenerateOrProlongToken(user.Id);
 
