@@ -1,0 +1,170 @@
+{
+	"info": {
+		"_postman_id": "a1f022b4-90d4-49fd-ab90-3877df3b5dd1",
+		"name": "TicketingSystem",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "13281212"
+	},
+	"item": [
+		{
+			"name": "RegisterController",
+			"item": [
+				{
+					"name": "/Register",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "accept",
+								"value": "text/plain"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userName\": \"jerry0511\",\r\n    \"password\": \"jerry0511\",\r\n    \"fullName\": \"jerry\",\r\n    \"email\": \"jerry0511@gmail.com\"\r\n}"
+						},
+						"url": {
+							"raw": "https://localhost:7248/Register",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "7248",
+							"path": [
+								"Register"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "LoginController",
+			"item": [
+				{
+					"name": "/Login",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "accept",
+								"value": "text/plain"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"userName\": \"jerry0511\",\r\n  \"password\": \"jerry0511\"\r\n}"
+						},
+						"url": {
+							"raw": "https://localhost:7248/Login",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "7248",
+							"path": [
+								"Login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "EventController",
+			"item": [
+				{
+					"name": "/Event/GetList",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "accept",
+								"value": "text/plain"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "e8c0fba6-df7b-44eb-94bd-7abd7a9cdbb8",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"startAt\": \"2021-11-20T01:15:44.036Z\",\r\n    \"endAt\": \"2030-03-20T01:15:44.036Z\"\r\n}"
+						},
+						"url": {
+							"raw": "https://localhost:7248/Event/GetList",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "7248",
+							"path": [
+								"Event",
+								"GetList"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/Event/Purchase",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "accept",
+								"value": "text/plain"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "e8c0fba6-df7b-44eb-94bd-7abd7a9cdbb8",
+								"type": "text"
+							},
+							{
+								"key": "CSRF-Token",
+								"value": "c9e180a6-4def-4b95-8811-721e2d02314f",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"eventId\": \"b9a5568a-4e52-4442-a451-17cd06a26b5a\",\r\n  \"ticketQuantity\": 1,\r\n  \"paymentToken\": \"some-random-string\"\r\n}"
+						},
+						"url": {
+							"raw": "https://localhost:7248/Event/Purchase",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "7248",
+							"path": [
+								"Event",
+								"Purchase"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
