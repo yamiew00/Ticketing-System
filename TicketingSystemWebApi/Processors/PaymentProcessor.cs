@@ -8,7 +8,7 @@
         public async Task<PaymentResponseData> Process(PaymentRequestData request)
         {
             //模擬真實情境的網路延遲
-            await Task.Delay(500);
+            await Task.Delay(300);
 
             return new PaymentResponseData
             {
