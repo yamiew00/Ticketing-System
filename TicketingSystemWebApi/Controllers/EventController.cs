@@ -18,7 +18,7 @@ namespace TicketingSystemWebApi.Controllers
         }
 
         /// <summary>
-        /// 取得event的清單
+        /// 取得有剩餘票卷的event清單
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>

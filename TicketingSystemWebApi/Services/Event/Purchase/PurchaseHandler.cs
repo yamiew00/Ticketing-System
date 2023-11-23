@@ -9,14 +9,17 @@ namespace TicketingSystemWebApi.Services.Event.Purchase
         private readonly IGoCollection<TicketEntity> _ticketCollection;
         private readonly PaymentProcessor _paymentProcessor;
         private readonly EmailProcessor _emailProcessor;
+        private readonly IGoCollection<TransactionRecordEntity> _transactionRecordCollection;
 
         public PurchaseHandler(IGoCollection<TicketEntity> ticketCollection,
                                PaymentProcessor paymentProcessor,
-                               EmailProcessor emailProcessor)
+                               EmailProcessor emailProcessor,
+                               IGoCollection<TransactionRecordEntity> transactionRecordCollection)
         {
             this._ticketCollection = ticketCollection;
             this._paymentProcessor = paymentProcessor;
             this._emailProcessor = emailProcessor;
+            this._transactionRecordCollection = transactionRecordCollection;
         }
 
         internal async Task<EventPurchaseResponse> Purchase(EventPurchaseRequest request, 
@@ -69,12 +72,24 @@ namespace TicketingSystemWebApi.Services.Event.Purchase
                     Status = EventPurchaseStatus.PaymentFailed
                 };
             }
-
             var ticketIds = pendingPurchaseTickets.Select(ticket => ticket.TicketId).ToList();
+
             //email
             await _emailProcessor.SendPurchaseSuccessEmail(currentUser.UserId, ticketIds);
 
+            //票據標記為已出售
             await MarkTicketasSoldout(pendingPurchaseTickets);
+
+            //存下交易記錄
+            TransactionRecordEntity transactionRecordEntity = new TransactionRecordEntity
+            {
+                Time = utcNow,
+                Id = Guid.NewGuid().ToString(),
+                Tickets = ticketIds,
+                UserId = currentUser.UserId
+            };
+            await _transactionRecordCollection.InsertOneAsync(transactionRecordEntity);
+
             return new EventPurchaseResponse
             {
                 Status = EventPurchaseStatus.PurchaseSuccessful,

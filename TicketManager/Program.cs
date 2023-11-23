@@ -1,3 +1,5 @@
+
+using System.Reflection;
 using TicketManager.Extensions;
 using TicketManager.Tools.Swaggers;
 
@@ -11,6 +13,11 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
     c.SchemaFilter<SwaggerDefaultValues>();
+
+    // 設置XML註解文件的路徑
+    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    c.IncludeXmlComments(xmlPath);
 });
 
 //mongodb context

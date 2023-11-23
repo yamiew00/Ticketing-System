@@ -1,5 +1,6 @@
 ﻿using MongoDB.Bson.Serialization;
 using TicketingSystemModel;
+using TicketManager.Services.Delete;
 using TicketManager.Services.Event;
 using TicketManager.Tools;
 
@@ -20,7 +21,10 @@ namespace TicketManager.Extensions
 
         public static IServiceCollection AddDependencyInjections(this IServiceCollection services)
         {
+            //services
             services.AddScoped<EventService>();
+            services.AddScoped<DeleteService>();
+
             return services;
         }
     }
