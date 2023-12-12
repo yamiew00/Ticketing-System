@@ -22,6 +22,19 @@ builder.AddMongoContext();
 //manage the di system
 builder.Services.AddDependencyInjections();
 
+//add cors
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("MyAllowSpecificOrigins",
+                      builder =>
+                      {
+                          builder.SetIsOriginAllowed(origin => true) // allow any origin
+                                 .AllowAnyHeader()
+                                 .AllowAnyMethod()
+                                 .AllowCredentials();
+                      });
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -31,8 +44,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCors("MyAllowSpecificOrigins");
 app.UseMiddleware<GlobalExceptionMiddleware>();
 app.UseHttpsRedirection();
+
 
 app.MapControllers();
 

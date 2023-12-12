@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>購票頁面</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group input {
+            width: 300px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .error-message {
+            color: red;
+            font-size: 0.9em;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .button:hover {
+            background-color: #45a049;
+        }
+        .link-button {
+            background: none!important;
+            border: none;
+            padding: 0!important;
+            font-family: arial, sans-serif;
+            color: #069;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+        .remaining-tickets {
+            font-size: 1.2em;
+            color: #4CAF50;
+            border: 2px solid #ddd;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1 id="eventTitle">事件標題</h1>
+    <div id="remainingTickets" class="remaining-tickets"></div>
+    <div class="form-group">
+        <label for="ticketQuantity">票數 (1-5):</label>
+        <input type="number" id="ticketQuantity" name="ticketQuantity" min="1" max="5">
+    </div>
+    <button class="button" onclick="purchaseTickets()">購買票券</button>
+    <div id="purchaseResult"></div>
+    <button class="link-button" onclick="goBack()">回到事件頁面</button>
+
+    <script>
+        var eventId = localStorage.getItem('eventId');
+        var eventTitle = localStorage.getItem('eventTitle');
+        var availableTicketCount = localStorage.getItem('availableTicketCount');
+
+        document.getElementById('eventTitle').innerText = eventTitle;
+        document.getElementById('remainingTickets').innerText = '剩餘票數: ' + availableTicketCount;
+
+        function purchaseTickets() {
+            var ticketQuantity = document.getElementById("ticketQuantity").value;
+            var loginToken = localStorage.getItem('loginToken');
+            var csrfToken = localStorage.getItem('csrfToken');
+
+            fetch('https://localhost:7248/Event/Purchase', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'text/plain',
+                    'Content-Type': 'application/json',
+                    'Authorization': loginToken,
+                    'CSRF-Token': csrfToken
+                },
+                body: JSON.stringify({
+                    eventId: eventId,
+                    ticketQuantity: ticketQuantity,
+                    paymentToken: "some-random-string" // 需要根據實際情況修改
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                handlePurchaseResponse(data);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                alert("購買失敗，請檢查伺服器狀態。");
+            });
+        }
+
+        function handlePurchaseResponse(data) {
+            var resultDiv = document.getElementById("purchaseResult");
+            if (data.data.status === 0) {
+                resultDiv.innerHTML = '<p>購票成功！您已成功購買 ' + data.data.tickets.length + ' 張票券。</p>';
+            } else if (data.data.status === 2) {
+                resultDiv.innerHTML = '<p class="error-message">票已經售罄！</p>';
+            } else {
+                resultDiv.innerHTML = '<p class="error-message">購票過程中出現問題。</p>';
+            }
+        }
+
+        function goBack() {
+            window.location.href = 'event.html';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>註冊頁面</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group input {
+            width: 300px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .error-message {
+            color: red;
+            font-size: 0.9em;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .button:hover {
+            background-color: #45a049;
+        }
+        .link-button {
+            background: none!important;
+            border: none;
+            padding: 0!important;
+            font-family: arial, sans-serif;
+            color: #069;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>註冊新用戶</h1>
+    <div class="form-group">
+        <label for="username">帳號:</label>
+        <input type="text" id="username" name="username">
+        <div id="usernameError" class="error-message"></div>
+    </div>
+    <div class="form-group">
+        <label for="password">密碼:</label>
+        <input type="password" id="password" name="password">
+    </div>
+    <div class="form-group">
+        <label for="fullname">全名:</label>
+        <input type="text" id="fullname" name="fullname">
+    </div>
+    <div class="form-group">
+        <label for="email">信箱:</label>
+        <input type="email" id="email" name="email">
+    </div>
+    <button class="button" onclick="register()">註冊</button>
+
+    <button class="link-button" onclick="goToLogin()">我已有帳號，我想要直接登入</button>
+
+    <script>
+        function register() {
+            var userData = {
+                userName: document.getElementById("username").value,
+                password: document.getElementById("password").value,
+                fullName: document.getElementById("fullname").value,
+                email: document.getElementById("email").value
+            };
+
+            fetch('https://localhost:7248/Register', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'text/plain',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(userData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.errCode === 1100) {
+                    document.getElementById("usernameError").innerText = "此帳號已存在";
+                } else if (data.errCode === 0) {
+                    window.location.href = 'login.html'; // 跳轉到登入頁面
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                alert("註冊失敗，請檢查伺服器狀態。");
+            });
+        }
+
+        function goToLogin() {
+            window.location.href = 'login.html'; // 跳轉到登入頁面
+        }
+    </script>
+</body>
+</html>

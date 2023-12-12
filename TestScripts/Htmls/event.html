@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>事件頁面</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+        }
+        .event {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            transition: all 0.3s ease; /* 添加平滑過渡效果 */
+            cursor: pointer; /* 將滑鼠指標變為手指形狀 */
+        }
+        .event:hover {
+            background-color: #f0f0f0; /* 滑鼠懸停時改變背景顏色 */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 添加陰影效果 */
+        }
+        .event h2 {
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>在售票券</h1>
+    <div id="eventsContainer">
+        <!-- 事件資訊將在這裡顯示 -->
+    </div>
+
+    <script>
+        function fetchEvents() {
+            var loginToken = localStorage.getItem('loginToken');
+
+            fetch('https://localhost:7248/Event/GetList', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'text/plain',
+                    'Content-Type': 'application/json',
+                    'Authorization': loginToken
+                },
+                body: JSON.stringify({
+                    startAt: "2021-11-20T01:15:44.036Z",
+                    endAt: "2030-03-20T01:15:44.036Z"
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                displayEvents(data.data.events); // 更新這裡以處理正確的資料結構
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                alert("無法獲取事件資訊，請檢查伺服器狀態。");
+            });
+        }
+
+         function displayEvents(events) {
+            const container = document.getElementById("eventsContainer");
+            container.innerHTML = ''; // 清空容器內容
+            events.forEach(event => {
+                const eventType = event.eventType === 1 ? "音樂會" : "展覽會";
+                const eventElement = document.createElement('div');
+                eventElement.className = 'event';
+                eventElement.innerHTML = `
+                    <h2>${event.title}</h2>
+                    <p>${event.description}</p>
+                    <p>起始時間: ${new Date(event.startAt).toLocaleString()}</p>
+                    <p>結束時間: ${new Date(event.endAt).toLocaleString()}</p>
+                    <p>類型: ${eventType}</p>
+                    <p>可用票數: ${event.availableTicketCount}</p>
+                `;
+                eventElement.onclick = function() { selectEvent(event); };
+                container.appendChild(eventElement);
+            });
+        }
+
+        function selectEvent(event) {
+            localStorage.setItem('eventId', event.id);
+            localStorage.setItem('eventTitle', event.title);
+            localStorage.setItem('availableTicketCount', event.availableTicketCount);
+            window.location.href = 'purchase.html';
+        }
+
+        fetchEvents();
+    </script>
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>登入頁面</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group input {
+            width: 300px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .error-message {
+            color: red;
+            font-size: 0.9em;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>用戶登入</h1>
+    <div class="form-group">
+        <label for="username">帳號:</label>
+        <input type="text" id="username" name="username">
+    </div>
+    <div class="form-group">
+        <label for="password">密碼:</label>
+        <input type="password" id="password" name="password">
+    </div>
+    <div id="loginError" class="error-message"></div>
+    <button class="button" onclick="login()">登入</button>
+
+        <script>
+        function login() {
+            var loginData = {
+                userName: document.getElementById("username").value,
+                password: document.getElementById("password").value
+            };
+
+            fetch('https://localhost:7248/Login', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'text/plain',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(loginData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.errCode === 1101) {
+                    document.getElementById("loginError").innerText = "帳號或密碼錯誤!";
+                } else if (data.errCode === 0) {
+                    localStorage.setItem('loginToken', data.data.loginToken);
+                    localStorage.setItem('csrfToken', data.data.csrfToken);
+                    window.location.href = 'event.html'; // 跳轉到事件頁面
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                alert("登入失敗，請檢查伺服器狀態。");
+            });
+        }
+    </script>
+</body>
+</html>
